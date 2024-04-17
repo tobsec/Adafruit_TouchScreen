@@ -53,7 +53,7 @@ public:
    * @param rx The resistance in ohms between X+ and X- to calibrate pressure
    * sensing
    */
-  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, uint16_t rx);
+  TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym, uint16_t rx, uint8_t xp_a, uint8_t xm_a);
 
   /**
    * @brief **NOT IMPLEMENTED** Test if the screen has been touched
@@ -69,6 +69,7 @@ public:
 
 private:
   uint8_t _yp, _ym, _xm, _xp;
+  uint8_t _yp_a, _xm_a;
   uint16_t _rxplate;
 
 #if defined(USE_FAST_PINIO)

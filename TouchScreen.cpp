@@ -100,7 +100,7 @@ TSPoint TouchScreen::getPoint(void) {
 #endif
 
   for (i = 0; i < NUMSAMPLES; i++) {
-    samples[i] = analogRead(_yp);
+    samples[i] = analogRead(_yp_a);
   }
 
 #if NUMSAMPLES > 2
@@ -136,7 +136,7 @@ TSPoint TouchScreen::getPoint(void) {
 #endif
 
   for (i = 0; i < NUMSAMPLES; i++) {
-    samples[i] = analogRead(_xm);
+    samples[i] = analogRead(_xm_a);
   }
 
 #if NUMSAMPLES > 2
@@ -168,8 +168,8 @@ TSPoint TouchScreen::getPoint(void) {
   digitalWrite(_ym, HIGH);
 #endif
 
-  int z1 = analogRead(_xm);
-  int z2 = analogRead(_yp);
+  int z1 = analogRead(_xm_a);
+  int z2 = analogRead(_yp_a);
 
   if (_rxplate != 0) {
     // now read the x
@@ -194,12 +194,24 @@ TSPoint TouchScreen::getPoint(void) {
 }
 
 TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym,
-                         uint16_t rxplate = 0) {
+                         uint16_t rxplate = 0, uint8_t yp_a = 255, uint8_t xm_a = 255) {
   _yp = yp;
   _xm = xm;
   _ym = ym;
   _xp = xp;
   _rxplate = rxplate;
+
+if (yp_a != 255) {
+  _yp_a = yp_a;
+} else {
+  _yp_a = yp;
+}
+
+if (_xm_a != 255) {
+  _xm_a = xm_a;
+} else {
+  _xm_a = xm;
+}
 
 #if defined(USE_FAST_PINIO)
   xp_port = portOutputRegister(digitalPinToPort(_xp));
@@ -231,7 +243,7 @@ int TouchScreen::readTouchX(void) {
   pinMode(_xm, OUTPUT);
   digitalWrite(_xm, LOW);
 
-  return (1023 - analogRead(_yp));
+  return (1023 - analogRead(_yp_a));
 }
 /**
  * @brief Read the touch event's Y value
@@ -249,7 +261,7 @@ int TouchScreen::readTouchY(void) {
   pinMode(_ym, OUTPUT);
   digitalWrite(_ym, LOW);
 
-  return (1023 - analogRead(_xm));
+  return (1023 - analogRead(_xm_a));
 }
 /**
  * @brief Read the touch event's Z/pressure value
@@ -271,8 +283,8 @@ uint16_t TouchScreen::pressure(void) {
   digitalWrite(_yp, LOW);
   pinMode(_yp, INPUT);
 
-  int z1 = analogRead(_xm);
-  int z2 = analogRead(_yp);
+  int z1 = analogRead(_xm_a);
+  int z2 = analogRead(_yp_a);
 
   if (_rxplate != 0) {
     // now read the x
